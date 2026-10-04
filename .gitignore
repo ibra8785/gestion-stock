@@ -1,0 +1,15 @@
+# Environnement virtuel Python
+.venv/
+
+# Fichiers temporaires Python
+__pycache__/
+*.py[cod]
+
+# Base de données locale SQLite
+db.sqlite3
+
+# Fichiers système macOS
+.DS_Store
+
+# Variables d'environnement et informations sensibles
+.env
