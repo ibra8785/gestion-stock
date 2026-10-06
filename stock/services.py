@@ -1,8 +1,7 @@
 from django.db import transaction
 
-# Importe les modèles nécessaires pour calculer les ventes,
-# créer leurs lignes et enregistrer les lots utilisés.
-from .models import StockLot, Sale, SaleItem, SaleAllocation
+# Importe les modèles utilisés par les services de gestion du stock et des ventes.
+from .models import StockLot, Sale, SaleItem, SaleAllocation, StockMovement
 
 # Parcourt les lots disponibles dans l'ordre FIFO
 # afin de déterminer quelle quantité doit être prélevée dans chaque lot.
@@ -65,8 +64,7 @@ def calculate_sale(product, quantity, selling_price):
         "total_profit": total_profit,
     }
 
-# Déduit les quantités vendues des lots de stock
-# en respectant l'ordre FIFO.
+# Retire les quantités vendues des lots et enregistre chaque sortie de stock.
 def apply_fifo_sale(allocations):
     for allocation in allocations:
         lot = allocation["lot"]
@@ -77,6 +75,57 @@ def apply_fifo_sale(allocations):
 
         lot.quantity_remaining -= quantity
         lot.save(update_fields=["quantity_remaining"])
+
+        # Enregistre la quantité réellement sortie du lot à cause de la vente.
+        StockMovement.objects.create(
+            product=lot.product,
+            stock_lot=lot,
+            movement_type="SORTIE",
+            quantity=quantity,
+            reason="Vente",
+        )
+
+# Crée un lot de stock et enregistre automatiquement son entrée dans l'historique.
+def create_stock_entry(product, supplier, quantity, purchase_price, reason="Réception de stock"):
+    with transaction.atomic():
+        lot = StockLot.objects.create(
+            product=product,
+            supplier=supplier,
+            quantity_initial=quantity,
+            quantity_remaining=quantity,
+            purchase_price=purchase_price,
+        )
+
+        StockMovement.objects.create(
+            product=product,
+            stock_lot=lot,
+            movement_type="ENTREE",
+            quantity=quantity,
+            reason=reason,
+        )
+
+        return lot
+
+# Ajuste la quantité restante d'un lot et enregistre la correction dans l'historique.
+def adjust_stock(lot, quantity, reason):
+    with transaction.atomic():
+        new_quantity = lot.quantity_remaining + quantity
+
+        if new_quantity < 0:
+            raise ValueError("L'ajustement ne peut pas rendre le stock négatif.")
+
+        lot.quantity_remaining = new_quantity
+        lot.save(update_fields=["quantity_remaining"])
+
+        StockMovement.objects.create(
+            product=lot.product,
+            stock_lot=lot,
+            movement_type="AJUSTEMENT",
+            quantity=abs(quantity),
+            reason=reason,
+        )
+
+        return lot
 
 # Crée une vente, sa ligne de produit et les allocations
 # puis déduit les quantités des lots utilisés par le système FIFO.

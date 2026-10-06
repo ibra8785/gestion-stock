@@ -77,8 +77,22 @@ class StockLot(models.Model):
 # Modèle Sale : permet d'enregistrer une vente complète,
 # avec le client, la date, le montant total et le bénéfice total.
 
+class StockMovement(models.Model):
+    MOVEMENT_TYPES = [
+        ("ENTREE", "Entrée"),
+        ("SORTIE", "Sortie"),
+        ("AJUSTEMENT", "Ajustement"),
+    ]
+
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
+    stock_lot = models.ForeignKey(StockLot, on_delete=models.PROTECT)
+    movement_type = models.CharField(max_length=20, choices=MOVEMENT_TYPES)
+    quantity = models.PositiveIntegerField()
+    reason = models.CharField(max_length=255, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
+
 class Sale(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
     date = models.DateTimeField(auto_now_add=True)
     total_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     total_profit = models.DecimalField(max_digits=12, decimal_places=2, default=0)
@@ -88,7 +102,7 @@ class Sale(models.Model):
 
 class SaleItem(models.Model):
     sale = models.ForeignKey(Sale, on_delete=models.CASCADE)
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
     selling_price = models.DecimalField(max_digits=12, decimal_places=2)
     cost_price = models.DecimalField(max_digits=12, decimal_places=2)
@@ -99,6 +113,6 @@ class SaleItem(models.Model):
 
 class SaleAllocation(models.Model):
     sale_item = models.ForeignKey(SaleItem, on_delete=models.CASCADE)
-    stock_lot = models.ForeignKey(StockLot, on_delete=models.CASCADE)
+    stock_lot = models.ForeignKey(StockLot, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
     cost_price = models.DecimalField(max_digits=12, decimal_places=2)

@@ -1,8 +1,8 @@
 # Importe le système d'administration de Django.
 from django.contrib import admin
 
-# Importe les modèles que nous voulons gérer depuis Django Admin.
-from .models import Product, Supplier, Customer, StockLot, Sale, SaleItem, SaleAllocation
+# Importe les modèles disponibles dans l'administration Django.
+from .models import Product, Supplier, Customer, StockLot, StockMovement, Sale, SaleItem, SaleAllocation
 
 
 # Personnalise l'affichage des lots de stock dans Django Admin.
@@ -33,3 +33,22 @@ admin.site.register(Customer)
 admin.site.register(Sale)
 admin.site.register(SaleItem)
 admin.site.register(SaleAllocation)
+
+# Personnalise l'affichage de l'historique des mouvements de stock.
+@admin.register(StockMovement)
+class StockMovementAdmin(admin.ModelAdmin):
+    # Affiche les informations essentielles du mouvement dans la liste.
+    list_display = (
+        "product",
+        "stock_lot",
+        "movement_type",
+        "quantity",
+        "reason",
+        "date",
+    )
+
+    # Permet de filtrer rapidement les mouvements par type.
+    list_filter = ("movement_type", "date")
+
+    # Permet de rechercher par produit, lot ou raison.
+    search_fields = ("product__reference", "stock_lot__id", "reason")
