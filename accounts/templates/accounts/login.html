@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion - Gestion de stock</title>
+</head>
+<body>
+
+    <!-- Formulaire de connexion. -->
+    <h1>Connexion</h1>
+
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+
+        <!-- Champ du nom d'utilisateur. -->
+        <div>
+            <label for="id_username">Nom d'utilisateur :</label>
+            <input type="text" name="username" id="id_username" required>
+        </div>
+
+        <!-- Champ du mot de passe. -->
+        <div>
+            <label for="id_password">Mot de passe :</label>
+            <input type="password" name="password" id="id_password" required>
+        </div>
+
+        <!-- Bouton de connexion. -->
+        <button type="submit">Se connecter</button>
+    </form>
+
+</body>
+</html>
