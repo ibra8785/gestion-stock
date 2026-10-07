@@ -31,14 +31,6 @@ class Supplier(models.Model):
         return f"{self.name} ({self.reference})"
 
 
-# Modèle StockLot : permet d'enregistrer chaque entrée de stock
-# avec le produit, le fournisseur, la quantité, le prix d'achat
-# et la date de réception.
-
-# Modèle StockLot : permet d'enregistrer chaque entrée de stock
-# avec le produit, le fournisseur, la quantité, le prix d'achat
-# et la date de réception.
-
 # Modèle Customer : permet d'enregistrer les informations
 # de chaque client qui pourra être associé à une ou plusieurs ventes.
 
@@ -51,6 +43,11 @@ class Customer(models.Model):
     # Définit le texte que Django doit afficher pour un client dans les listes.
     def __str__(self):
         return f"{self.name} ({self.reference})"
+
+
+# Modèle StockLot : permet d'enregistrer chaque entrée de stock
+# avec le produit, le fournisseur, la quantité, le prix d'achat
+# et la date de réception.
 
 class StockLot(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -74,8 +71,9 @@ class StockLot(models.Model):
 
         super().save(*args, **kwargs)
 
-# Modèle Sale : permet d'enregistrer une vente complète,
-# avec le client, la date, le montant total et le bénéfice total.
+
+# Modèle StockMovement : permet de garder l'historique
+# des entrées, sorties et ajustements de stock.
 
 class StockMovement(models.Model):
     MOVEMENT_TYPES = [
@@ -91,11 +89,16 @@ class StockMovement(models.Model):
     reason = models.CharField(max_length=255, blank=True)
     date = models.DateTimeField(auto_now_add=True)
 
+
+# Modèle Sale : permet d'enregistrer une vente complète,
+# avec le client, la date, le montant total et le bénéfice total.
+
 class Sale(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.PROTECT)
     date = models.DateTimeField(auto_now_add=True)
     total_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0)
     total_profit = models.DecimalField(max_digits=12, decimal_places=2, default=0)
+
 
 # Modèle SaleItem : représente un produit vendu dans une vente.
 # Il enregistre la quantité vendue, le prix de vente et le coût d'achat.
@@ -108,6 +111,7 @@ class SaleItem(models.Model):
     cost_price = models.DecimalField(max_digits=12, decimal_places=2)
     profit = models.DecimalField(max_digits=12, decimal_places=2, default=0)
 
+
 # Modèle SaleAllocation : permet de préciser de quel lot de stock
 # provient chaque quantité vendue lors d'une vente.
 
@@ -116,3 +120,35 @@ class SaleAllocation(models.Model):
     stock_lot = models.ForeignKey(StockLot, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
     cost_price = models.DecimalField(max_digits=12, decimal_places=2)
+
+
+# Modèle Expense : permet d'enregistrer les dépenses et charges
+# de l'entreprise qui ne correspondent pas à des achats de stock.
+
+class Expense(models.Model):
+    CATEGORY_CHOICES = [
+        ("LOYER", "Loyer"),
+        ("ELECTRICITE", "Électricité"),
+        ("EAU", "Eau"),
+        ("TRANSPORT", "Transport"),
+        ("SALAIRE", "Salaire"),
+        ("TELEPHONE", "Téléphone / Internet"),
+        ("ENTRETIEN", "Entretien"),
+        ("FOURNITURES", "Fournitures"),
+        ("AUTRE", "Autre"),
+    ]
+
+    label = models.CharField(max_length=200)
+    category = models.CharField(max_length=30, choices=CATEGORY_CHOICES)
+    amount = models.DecimalField(max_digits=12, decimal_places=2)
+    date = models.DateField()
+    description = models.TextField(blank=True)
+    created_by = models.ForeignKey(
+        "auth.User",
+        on_delete=models.PROTECT,
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    # Définit le texte affiché pour une dépense.
+    def __str__(self):
+        return f"{self.label} - {self.amount}"

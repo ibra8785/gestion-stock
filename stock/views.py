@@ -4,10 +4,32 @@ from django.shortcuts import get_object_or_404
 # Importe les outils nécessaires pour créer une vue API et envoyer une réponse HTTP.
 from rest_framework.views import APIView
 from rest_framework.response import Response
+# Importe la base permettant de créer une permission personnalisée.
+from rest_framework.permissions import BasePermission
+
+# Définit les permissions nécessaires selon l'action effectuée sur une dépense.
+class ExpensePermission(BasePermission):
+    def has_permission(self, request, view):
+        if request.method == "GET":
+            return request.user.has_perm("stock.view_expense")
+
+        if request.method == "POST":
+            return request.user.has_perm("stock.add_expense")
+
+        if request.method in ["PUT", "PATCH"]:
+            return request.user.has_perm("stock.change_expense")
+
+        if request.method == "DELETE":
+            return request.user.has_perm("stock.delete_expense")
+
+        return False
+
+# Importe la permission qui exige qu'un utilisateur soit authentifié.
+from rest_framework.permissions import IsAuthenticated
 
 # Importe notre modèle Product et le serializer qui transforme les produits en données API.
-from .models import Product
-from .serializers import ProductSerializer
+from .models import Product, Expense
+from .serializers import ProductSerializer, ExpenseSerializer
 
 
 # Crée la vue API qui permet de récupérer la liste des produits et d'en créer un nouveau.
@@ -90,4 +112,64 @@ class ProductDetailAPIView(APIView):
         product.delete()
 
         # Confirme que la suppression a été effectuée avec le statut HTTP 204.
+        return Response(status=204)
+
+# Crée la vue API qui permet de consulter les dépenses et d'en créer une nouvelle.
+class ExpenseListAPIView(APIView):
+    permission_classes = [IsAuthenticated, ExpensePermission]
+
+    # Traite les requêtes GET envoyées pour récupérer toutes les dépenses.
+    def get(self, request):
+        expenses = Expense.objects.all().order_by("-date", "-id")
+        serializer = ExpenseSerializer(expenses, many=True)
+        return Response(serializer.data)
+
+    # Traite les requêtes POST envoyées pour créer une nouvelle dépense.
+    def post(self, request):
+        serializer = ExpenseSerializer(data=request.data)
+
+        if serializer.is_valid():
+
+            # Associe automatiquement la dépense à l'utilisateur connecté.
+            serializer.save(created_by=request.user)
+
+            return Response(serializer.data, status=201)
+
+# Crée la vue API qui permet de consulter, modifier ou supprimer une dépense précise.
+class ExpenseDetailAPIView(APIView):
+    # Applique les permissions adaptées à chaque opération sur une dépense.
+    permission_classes = [IsAuthenticated, ExpensePermission]
+
+    # Traite les requêtes GET envoyées pour consulter une dépense.
+    def get(self, request, pk):
+        expense = get_object_or_404(Expense, pk=pk)
+        serializer = ExpenseSerializer(expense)
+        return Response(serializer.data)
+
+    # Traite les requêtes PUT envoyées pour modifier une dépense.
+    def put(self, request, pk):
+        expense = get_object_or_404(Expense, pk=pk)
+        serializer = ExpenseSerializer(expense, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=400)
+
+    # Traite les requêtes PATCH envoyées pour modifier partiellement une dépense.
+    def patch(self, request, pk):
+        expense = get_object_or_404(Expense, pk=pk)
+        serializer = ExpenseSerializer(expense, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=400)
+
+    # Traite les requêtes DELETE envoyées pour supprimer une dépense.
+    def delete(self, request, pk):
+        expense = get_object_or_404(Expense, pk=pk)
+        expense.delete()
         return Response(status=204)

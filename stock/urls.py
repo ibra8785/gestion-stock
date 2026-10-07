@@ -1,8 +1,8 @@
 # Importe les fonctions permettant de définir les URLs de notre application.
 from django.urls import path
 
-# Importe les deux vues API utilisées pour gérer la liste et le détail des produits.
-from .views import ProductListAPIView, ProductDetailAPIView
+# Importe les vues API utilisées pour gérer les produits et les dépenses.
+from .views import ProductListAPIView, ProductDetailAPIView, ExpenseListAPIView, ExpenseDetailAPIView
 
 
 # Définit les routes disponibles pour les produits dans l'API.
@@ -12,4 +12,10 @@ urlpatterns = [
 
     # Retourne les informations d'un seul produit grâce à son identifiant.
     path("products/<int:pk>/", ProductDetailAPIView.as_view(), name="product-detail"),
+
+    # Retourne la liste des dépenses et permet d'en créer une nouvelle.
+    path("expenses/", ExpenseListAPIView.as_view(), name="expense-list"),
+
+    # Permet de consulter, modifier ou supprimer une dépense précise.
+    path("expenses/<int:pk>/", ExpenseDetailAPIView.as_view(), name="expense-detail"),
 ]

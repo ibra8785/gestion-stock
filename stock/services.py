@@ -1,7 +1,7 @@
 from django.db import transaction
 
-# Importe les modèles utilisés par les services de gestion du stock et des ventes.
-from .models import StockLot, Sale, SaleItem, SaleAllocation, StockMovement
+# Importe les modèles utilisés par les services de gestion du stock, des ventes et des dépenses.
+from .models import StockLot, Sale, SaleItem, SaleAllocation, StockMovement, Expense
 
 # Parcourt les lots disponibles dans l'ordre FIFO
 # afin de déterminer quelle quantité doit être prélevée dans chaque lot.
@@ -224,3 +224,29 @@ def create_multi_product_sale(customer, items):
         sale.save(update_fields=["total_amount", "total_profit"])
 
         return sale
+
+# Crée une dépense et l'associe à l'utilisateur qui l'a enregistrée.
+def create_expense(
+    label,
+    category,
+    amount,
+    date,
+    created_by,
+    description="",
+):
+    # Vérifie que le montant est strictement supérieur à zéro.
+    if amount <= 0:
+        raise ValueError("Le montant de la dépense doit être supérieur à zéro.")
+
+    # Crée la dépense dans une transaction atomique.
+    with transaction.atomic():
+        expense = Expense.objects.create(
+            label=label,
+            category=category,
+            amount=amount,
+            date=date,
+            description=description,
+            created_by=created_by,
+        )
+
+        return expense

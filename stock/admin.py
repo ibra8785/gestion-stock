@@ -2,7 +2,17 @@
 from django.contrib import admin
 
 # Importe les modèles disponibles dans l'administration Django.
-from .models import Product, Supplier, Customer, StockLot, StockMovement, Sale, SaleItem, SaleAllocation
+from .models import (
+    Product,
+    Supplier,
+    Customer,
+    StockLot,
+    StockMovement,
+    Sale,
+    SaleItem,
+    SaleAllocation,
+    Expense,
+)
 
 
 # Personnalise l'affichage des lots de stock dans Django Admin.
@@ -34,7 +44,9 @@ admin.site.register(Sale)
 admin.site.register(SaleItem)
 admin.site.register(SaleAllocation)
 
+
 # Personnalise l'affichage de l'historique des mouvements de stock.
+
 @admin.register(StockMovement)
 class StockMovementAdmin(admin.ModelAdmin):
     # Affiche les informations essentielles du mouvement dans la liste.
@@ -52,3 +64,24 @@ class StockMovementAdmin(admin.ModelAdmin):
 
     # Permet de rechercher par produit, lot ou raison.
     search_fields = ("product__reference", "stock_lot__id", "reason")
+
+
+# Personnalise l'affichage des dépenses dans Django Admin.
+
+@admin.register(Expense)
+class ExpenseAdmin(admin.ModelAdmin):
+    # Affiche les informations essentielles d'une dépense.
+    list_display = (
+        "label",
+        "category",
+        "amount",
+        "date",
+        "created_by",
+        "created_at",
+    )
+
+    # Permet de filtrer les dépenses par catégorie et par date.
+    list_filter = ("category", "date")
+
+    # Permet de rechercher une dépense par libellé ou description.
+    search_fields = ("label", "description")
