@@ -1,7 +1,7 @@
 # Importe les outils de Django REST Framework et le modèle Product que notre API devra exposer.
 from rest_framework import serializers
 
-from .models import Product, Expense, Sale, StockLot
+from .models import Product, Supplier, Customer, Expense, Sale, StockLot, StockMovement
 
 # Définit le serializer du produit afin de convertir les données du modèle Product en données utilisables par notre API.
 class ProductSerializer(serializers.ModelSerializer):
@@ -9,6 +9,62 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = "__all__"
+
+# Définit le serializer du fournisseur afin de convertir les données du modèle Supplier pour l'API.
+class SupplierSerializer(serializers.ModelSerializer):
+    # Configure le serializer pour utiliser le modèle Supplier et tous ses champs.
+    class Meta:
+        model = Supplier
+        fields = "__all__"
+
+# Définit le serializer du client afin de convertir les données du modèle Customer pour l'API.
+class CustomerSerializer(serializers.ModelSerializer):
+    # Configure le serializer pour utiliser le modèle Customer et tous ses champs.
+    class Meta:
+        model = Customer
+        fields = "__all__"
+
+# Définit les données nécessaires pour enregistrer une nouvelle entrée de stock.
+class StockEntrySerializer(serializers.Serializer):
+    # Identifie le produit qui entre en stock.
+    product = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all()
+    )
+
+    # Identifie le fournisseur de l'entrée de stock.
+    supplier = serializers.PrimaryKeyRelatedField(
+        queryset=Supplier.objects.all()
+    )
+
+    # Quantité reçue lors de l'entrée en stock.
+    quantity = serializers.IntegerField(min_value=1)
+
+    # Prix d'achat unitaire du produit.
+    purchase_price = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        min_value=0,
+    )
+
+    # Motif facultatif de l'entrée de stock.
+    reason = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        default="Réception de stock",
+    )
+
+# Définit les données nécessaires pour effectuer un ajustement de stock.
+class StockAdjustmentSerializer(serializers.Serializer):
+    # Identifie le lot de stock à ajuster.
+    stock_lot = serializers.PrimaryKeyRelatedField(
+        queryset=StockLot.objects.all()
+    )
+
+    # Quantité à ajouter ou à retirer du stock.
+    quantity = serializers.IntegerField()
+
+    # Motif obligatoire de l'ajustement.
+    reason = serializers.CharField()
 
 # Définit le serializer des dépenses afin de convertir les données du modèle Expense pour l'API.
 class ExpenseSerializer(serializers.ModelSerializer):
@@ -99,3 +155,53 @@ class ProfitReportSerializer(serializers.Serializer):
 
     # Bénéfice net après déduction des dépenses.
     net_profit = serializers.DecimalField(max_digits=12, decimal_places=2)
+
+# Définit le serializer des mouvements de stock pour permettre leur consultation via l'API.
+class StockMovementSerializer(serializers.ModelSerializer):
+    # Affiche le nom du produit concerné par le mouvement.
+    product_name = serializers.CharField(source="product.name", read_only=True)
+
+    # Affiche la référence du produit concerné par le mouvement.
+    product_reference = serializers.CharField(source="product.reference", read_only=True)
+
+    class Meta:
+        model = StockMovement
+        fields = [
+            "id",
+            "product",
+            "product_name",
+            "product_reference",
+            "stock_lot",
+            "movement_type",
+            "quantity",
+            "reason",
+            "date",
+        ]
+
+# Définit les données nécessaires pour ajouter un produit dans une vente.
+class SaleItemCreateSerializer(serializers.Serializer):
+    # Identifie le produit vendu.
+    product = serializers.PrimaryKeyRelatedField(
+        queryset=Product.objects.all()
+    )
+
+    # Définit la quantité vendue.
+    quantity = serializers.IntegerField(min_value=1)
+
+    # Définit le prix de vente unitaire.
+    selling_price = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        min_value=0,
+    )
+
+
+# Définit les données nécessaires pour créer une vente complète.
+class SaleCreateSerializer(serializers.Serializer):
+    # Identifie le client associé à la vente.
+    customer = serializers.PrimaryKeyRelatedField(
+        queryset=Customer.objects.all()
+    )
+
+    # Contient les différents produits de la vente.
+    items = SaleItemCreateSerializer(many=True, allow_empty=False)

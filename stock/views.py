@@ -28,11 +28,12 @@ class ExpensePermission(BasePermission):
 from rest_framework.permissions import IsAuthenticated
 
 # Importe notre modèle Product et le serializer qui transforme les produits en données API.
-from .models import Product, Expense
-from .serializers import ProductSerializer, ExpenseSerializer, SalesReportSerializer, StockReportSerializer, ExpenseReportSerializer, ProfitReportSerializer
+from .models import Product, Supplier, Customer, Expense, StockMovement, Sale
+
+from .serializers import ProductSerializer, SupplierSerializer, CustomerSerializer, StockEntrySerializer, StockAdjustmentSerializer, StockMovementSerializer, SaleCreateSerializer, ExpenseSerializer, SalesReportSerializer, StockReportSerializer, ExpenseReportSerializer, ProfitReportSerializer
 
 # Importe la fonction qui calcule les statistiques du tableau de bord.
-from .services import get_dashboard_statistics, get_sales_report, get_stock_report, get_expenses_report, get_profit_report
+from .services import create_stock_entry, adjust_stock, create_multi_product_sale, get_dashboard_statistics, get_sales_report, get_stock_report, get_expenses_report, get_profit_report
 
 # Crée la vue API qui permet de récupérer la liste des produits et d'en créer un nouveau.
 class ProductListAPIView(APIView):
@@ -115,6 +116,208 @@ class ProductDetailAPIView(APIView):
 
         # Confirme que la suppression a été effectuée avec le statut HTTP 204.
         return Response(status=204)
+
+# Crée la vue API qui permet de lister et créer les fournisseurs.
+class SupplierListAPIView(APIView):
+    # Réserve l'accès aux utilisateurs connectés.
+    permission_classes = [IsAuthenticated]
+
+    # GET : retourne la liste de tous les fournisseurs.
+    def get(self, request):
+        suppliers = Supplier.objects.all().order_by("name")
+        serializer = SupplierSerializer(suppliers, many=True)
+
+        return Response(serializer.data)
+
+    # POST : crée un nouveau fournisseur.
+    def post(self, request):
+        serializer = SupplierSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+
+        return Response(serializer.errors, status=400)
+
+
+# Crée la vue API qui permet de consulter, modifier et supprimer un fournisseur.
+class SupplierDetailAPIView(APIView):
+    # Réserve l'accès aux utilisateurs connectés.
+    permission_classes = [IsAuthenticated]
+
+    # GET : retourne les informations d'un fournisseur précis.
+    def get(self, request, pk):
+        supplier = get_object_or_404(Supplier, pk=pk)
+        serializer = SupplierSerializer(supplier)
+
+        return Response(serializer.data)
+
+    # PUT : remplace les informations d'un fournisseur précis.
+    def put(self, request, pk):
+        supplier = get_object_or_404(Supplier, pk=pk)
+        serializer = SupplierSerializer(supplier, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=400)
+
+    # PATCH : modifie partiellement les informations d'un fournisseur.
+    def patch(self, request, pk):
+        supplier = get_object_or_404(Supplier, pk=pk)
+        serializer = SupplierSerializer(
+            supplier,
+            data=request.data,
+            partial=True,
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=400)
+
+    # DELETE : supprime un fournisseur précis.
+    def delete(self, request, pk):
+        supplier = get_object_or_404(Supplier, pk=pk)
+        supplier.delete()
+
+        return Response(status=204)
+
+# Crée la vue API qui permet de lister et créer les clients.
+class CustomerListAPIView(APIView):
+    # Réserve l'accès aux utilisateurs connectés.
+    permission_classes = [IsAuthenticated]
+
+    # GET : retourne la liste de tous les clients.
+    def get(self, request):
+        customers = Customer.objects.all().order_by("name")
+        serializer = CustomerSerializer(customers, many=True)
+
+        return Response(serializer.data)
+
+    # POST : crée un nouveau client.
+    def post(self, request):
+        serializer = CustomerSerializer(data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+
+        return Response(serializer.errors, status=400)
+
+
+# Crée la vue API qui permet de consulter, modifier et supprimer un client.
+class CustomerDetailAPIView(APIView):
+    # Réserve l'accès aux utilisateurs connectés.
+    permission_classes = [IsAuthenticated]
+
+    # GET : retourne les informations d'un client précis.
+    def get(self, request, pk):
+        customer = get_object_or_404(Customer, pk=pk)
+        serializer = CustomerSerializer(customer)
+
+        return Response(serializer.data)
+
+    # PUT : remplace les informations d'un client précis.
+    def put(self, request, pk):
+        customer = get_object_or_404(Customer, pk=pk)
+        serializer = CustomerSerializer(customer, data=request.data)
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=400)
+
+    # PATCH : modifie partiellement les informations d'un client.
+    def patch(self, request, pk):
+        customer = get_object_or_404(Customer, pk=pk)
+        serializer = CustomerSerializer(
+            customer,
+            data=request.data,
+            partial=True,
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+        return Response(serializer.errors, status=400)
+
+    # DELETE : supprime un client précis.
+    def delete(self, request, pk):
+        customer = get_object_or_404(Customer, pk=pk)
+        customer.delete()
+
+        return Response(status=204)
+
+# Crée la vue API qui permet d'enregistrer une nouvelle entrée de stock.
+class StockEntryAPIView(APIView):
+    # Réserve l'accès aux utilisateurs connectés.
+    permission_classes = [IsAuthenticated]
+
+    # POST : enregistre une nouvelle entrée de stock.
+    def post(self, request):
+        serializer = StockEntrySerializer(data=request.data)
+
+        if serializer.is_valid():
+            lot = create_stock_entry(
+                product=serializer.validated_data["product"],
+                supplier=serializer.validated_data["supplier"],
+                quantity=serializer.validated_data["quantity"],
+                purchase_price=serializer.validated_data["purchase_price"],
+                reason=serializer.validated_data["reason"],
+            )
+
+            return Response(
+                {
+                    "id": lot.id,
+                    "product": lot.product.id,
+                    "supplier": lot.supplier.id,
+                    "quantity_initial": lot.quantity_initial,
+                    "quantity_remaining": lot.quantity_remaining,
+                    "purchase_price": lot.purchase_price,
+                    "date_received": lot.date_received,
+                },
+                status=201,
+            )
+
+        return Response(serializer.errors, status=400)
+
+# Crée la vue API qui permet d'effectuer un ajustement de stock.
+class StockAdjustmentAPIView(APIView):
+    # Réserve l'accès aux utilisateurs connectés.
+    permission_classes = [IsAuthenticated]
+
+    # POST : applique un ajustement sur un lot de stock.
+    def post(self, request):
+        serializer = StockAdjustmentSerializer(data=request.data)
+
+        if serializer.is_valid():
+            try:
+                lot = adjust_stock(
+                    lot=serializer.validated_data["stock_lot"],
+                    quantity=serializer.validated_data["quantity"],
+                    reason=serializer.validated_data["reason"],
+                )
+            except ValueError as error:
+                return Response(
+                    {"error": str(error)},
+                    status=400,
+                )
+
+            return Response(
+                {
+                    "id": lot.id,
+                    "product": lot.product.id,
+                    "quantity_remaining": lot.quantity_remaining,
+                    "purchase_price": lot.purchase_price,
+                }
+            )
+
+        return Response(serializer.errors, status=400)
 
 # Crée la vue API qui permet de consulter les dépenses et d'en créer une nouvelle.
 class ExpenseListAPIView(APIView):
@@ -260,3 +463,71 @@ class ProfitReportAPIView(APIView):
         serializer = ProfitReportSerializer(profit_report)
 
         return Response(serializer.data)
+
+# Crée la vue API qui permet de consulter l'historique des mouvements de stock.
+class StockMovementListAPIView(APIView):
+    # Réserve l'accès aux utilisateurs connectés.
+    permission_classes = [IsAuthenticated]
+
+    # GET : retourne tous les mouvements de stock du plus récent au plus ancien.
+    def get(self, request):
+        movements = StockMovement.objects.select_related(
+            "product",
+            "stock_lot",
+        ).order_by("-date")
+
+        serializer = StockMovementSerializer(movements, many=True)
+
+        return Response(serializer.data)
+
+# Crée la vue API qui permet d'enregistrer une nouvelle vente.
+class SaleListCreateAPIView(APIView):
+    # Réserve l'accès aux utilisateurs connectés.
+    permission_classes = [IsAuthenticated]
+
+    # POST : crée une nouvelle vente avec un ou plusieurs produits.
+    def post(self, request):
+        serializer = SaleCreateSerializer(data=request.data)
+
+        if serializer.is_valid():
+            try:
+                sale = create_multi_product_sale(
+                    customer=serializer.validated_data["customer"],
+                    items=serializer.validated_data["items"],
+                )
+            except ValueError as error:
+                return Response(
+                    {"error": str(error)},
+                    status=400,
+                )
+
+            return Response(
+                {
+                    "id": sale.id,
+                    "customer": sale.customer.id,
+                    "total_amount": sale.total_amount,
+                    "total_profit": sale.total_profit,
+                    "date": sale.date,
+                },
+                status=201,
+            )
+
+        return Response(serializer.errors, status=400)
+
+    # GET : retourne la liste des ventes les plus récentes.
+    def get(self, request):
+        sales = Sale.objects.select_related("customer").order_by("-date")
+
+        return Response(
+            [
+                {
+                    "id": sale.id,
+                    "customer": sale.customer.id,
+                    "customer_name": sale.customer.name,
+                    "total_amount": sale.total_amount,
+                    "total_profit": sale.total_profit,
+                    "date": sale.date,
+                }
+                for sale in sales
+            ]
+        )
