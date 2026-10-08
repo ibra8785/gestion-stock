@@ -2,7 +2,7 @@
 from django.urls import path
 
 # Importe les vues API utilisées pour gérer les produits et les dépenses.
-from .views import ProductListAPIView, ProductDetailAPIView, ExpenseListAPIView, ExpenseDetailAPIView
+from .views import ProductListAPIView, ProductDetailAPIView, ExpenseListAPIView, ExpenseDetailAPIView, DashboardAPIView
 
 
 # Définit les routes disponibles pour les produits dans l'API.
@@ -18,4 +18,7 @@ urlpatterns = [
 
     # Permet de consulter, modifier ou supprimer une dépense précise.
     path("expenses/<int:pk>/", ExpenseDetailAPIView.as_view(), name="expense-detail"),
+
+    # Retourne les statistiques du tableau de bord.
+    path("dashboard/", DashboardAPIView.as_view(), name="dashboard"),
 ]

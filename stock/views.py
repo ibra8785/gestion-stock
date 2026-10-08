@@ -31,6 +31,8 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Product, Expense
 from .serializers import ProductSerializer, ExpenseSerializer
 
+# Importe la fonction qui calcule les statistiques du tableau de bord.
+from .services import get_dashboard_statistics
 
 # Crée la vue API qui permet de récupérer la liste des produits et d'en créer un nouveau.
 class ProductListAPIView(APIView):
@@ -173,3 +175,13 @@ class ExpenseDetailAPIView(APIView):
         expense = get_object_or_404(Expense, pk=pk)
         expense.delete()
         return Response(status=204)
+
+# Crée la vue API qui retourne les statistiques du tableau de bord.
+class DashboardAPIView(APIView):
+    # Réserve l'accès au tableau de bord aux utilisateurs connectés.
+    permission_classes = [IsAuthenticated]
+
+    # Traite les requêtes GET pour récupérer les statistiques.
+    def get(self, request):
+        statistics = get_dashboard_statistics()
+        return Response(statistics)

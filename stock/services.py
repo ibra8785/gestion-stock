@@ -1,5 +1,8 @@
 from django.db import transaction
 
+# Importe les outils nécessaires aux calculs statistiques du tableau de bord.
+from django.db.models import Sum, Count, F, DecimalField, ExpressionWrapper
+
 # Importe les modèles utilisés par les services de gestion du stock, des ventes et des dépenses.
 from .models import StockLot, Sale, SaleItem, SaleAllocation, StockMovement, Expense
 
@@ -250,3 +253,59 @@ def create_expense(
         )
 
         return expense
+
+# Calcule les principaux indicateurs du tableau de bord.
+def get_dashboard_statistics():
+    # Calcule les indicateurs financiers liés aux ventes.
+    total_sales = Sale.objects.aggregate(total=Sum("total_amount"))["total"] or 0
+    total_profit = Sale.objects.aggregate(total=Sum("total_profit"))["total"] or 0
+
+    # Calcule le montant total des dépenses.
+    total_expenses = Expense.objects.aggregate(total=Sum("amount"))["total"] or 0
+
+    # Calcule le bénéfice net après déduction des dépenses.
+    net_profit = total_profit - total_expenses
+
+    # Compte le nombre total de ventes enregistrées.
+    sales_count = Sale.objects.aggregate(total=Count("id"))["total"]
+
+    # Calcule la quantité totale actuellement disponible en stock.
+    stock_quantity = StockLot.objects.aggregate(total=Sum("quantity_remaining"))["total"] or 0
+
+    # Calcule la valeur du stock restant au prix d'achat.
+    stock_value = StockLot.objects.aggregate(
+        total=Sum(
+            ExpressionWrapper(
+                F("quantity_remaining") * F("purchase_price"),
+                output_field=DecimalField(max_digits=12, decimal_places=2),
+            )
+        )
+    )["total"] or 0
+
+    # Calcule les quantités vendues pour chaque produit.
+    top_products = list(
+        SaleItem.objects.values("product__reference", "product__name")
+        .annotate(total_quantity=Sum("quantity"))
+        .order_by("-total_quantity")
+    )
+
+    # Calcule le montant total des dépenses pour chaque catégorie.
+    expense_distribution = list(
+        Expense.objects
+        .values("category")
+        .annotate(total_amount=Sum("amount"))
+        .order_by("-total_amount")
+    )
+
+    # Retourne toutes les statistiques du tableau de bord.
+    return {
+        "total_sales": total_sales,
+        "total_profit": total_profit,
+        "total_expenses": total_expenses,
+        "net_profit": net_profit,
+        "sales_count": sales_count,
+        "stock_quantity": stock_quantity,
+        "stock_value": stock_value,
+        "top_products": top_products,
+        "expense_distribution": expense_distribution,
+    }
