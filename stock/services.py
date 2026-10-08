@@ -309,3 +309,70 @@ def get_dashboard_statistics():
         "top_products": top_products,
         "expense_distribution": expense_distribution,
     }
+
+# Génère le rapport des ventes pour une période donnée.
+def get_sales_report(start_date, end_date):
+    # Récupère les ventes comprises entre la date de début et la date de fin.
+    sales = Sale.objects.filter(
+        date__date__range=(start_date, end_date)
+    ).order_by("-date")
+
+    # Retourne les ventes trouvées.
+    return sales
+
+# Génère le rapport du stock restant.
+def get_stock_report():
+    # Récupère uniquement les lots qui possèdent encore du stock.
+    stock_lots = StockLot.objects.filter(
+        quantity_remaining__gt=0
+    ).select_related("product", "supplier").order_by(
+        "product__name",
+        "date_received",
+    )
+
+    # Retourne les lots de stock disponibles.
+    return stock_lots
+
+# Génère le rapport des dépenses pour une période donnée.
+def get_expenses_report(start_date, end_date):
+    # Récupère les dépenses comprises entre les deux dates.
+    expenses = Expense.objects.filter(
+        date__range=(start_date, end_date)
+    ).select_related("created_by").order_by("-date")
+
+    # Retourne les dépenses trouvées.
+    return expenses
+
+# Génère le rapport des bénéfices pour une période donnée.
+def get_profit_report(start_date, end_date):
+    # Calcule le chiffre d'affaires réalisé pendant la période.
+    total_sales = Sale.objects.filter(
+        date__date__range=(start_date, end_date)
+    ).aggregate(
+        total=Sum("total_amount")
+    )["total"] or 0
+
+    # Calcule le bénéfice brut généré par les ventes pendant la période.
+    total_profit = Sale.objects.filter(
+        date__date__range=(start_date, end_date)
+    ).aggregate(
+        total=Sum("total_profit")
+    )["total"] or 0
+
+    # Calcule le montant total des dépenses pendant la période.
+    total_expenses = Expense.objects.filter(
+        date__range=(start_date, end_date)
+    ).aggregate(
+        total=Sum("amount")
+    )["total"] or 0
+
+    # Calcule le bénéfice net après déduction des dépenses.
+    net_profit = total_profit - total_expenses
+
+    # Retourne les résultats financiers de la période.
+    return {
+        "total_sales": total_sales,
+        "total_profit": total_profit,
+        "total_expenses": total_expenses,
+        "net_profit": net_profit,
+    }

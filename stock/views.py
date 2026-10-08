@@ -29,10 +29,10 @@ from rest_framework.permissions import IsAuthenticated
 
 # Importe notre modèle Product et le serializer qui transforme les produits en données API.
 from .models import Product, Expense
-from .serializers import ProductSerializer, ExpenseSerializer
+from .serializers import ProductSerializer, ExpenseSerializer, SalesReportSerializer, StockReportSerializer, ExpenseReportSerializer, ProfitReportSerializer
 
 # Importe la fonction qui calcule les statistiques du tableau de bord.
-from .services import get_dashboard_statistics
+from .services import get_dashboard_statistics, get_sales_report, get_stock_report, get_expenses_report, get_profit_report
 
 # Crée la vue API qui permet de récupérer la liste des produits et d'en créer un nouveau.
 class ProductListAPIView(APIView):
@@ -185,3 +185,78 @@ class DashboardAPIView(APIView):
     def get(self, request):
         statistics = get_dashboard_statistics()
         return Response(statistics)
+
+# Crée la vue API qui retourne le rapport des ventes pour une période donnée.
+class SalesReportAPIView(APIView):
+    # Réserve l'accès au rapport aux utilisateurs connectés.
+    permission_classes = [IsAuthenticated]
+
+    # GET : récupère les ventes comprises entre deux dates.
+    def get(self, request):
+        start_date = request.query_params.get("start_date")
+        end_date = request.query_params.get("end_date")
+
+        if not start_date or not end_date:
+            return Response(
+                {"error": "Les paramètres start_date et end_date sont obligatoires."},
+                status=400,
+            )
+
+        sales = get_sales_report(start_date, end_date)
+        serializer = SalesReportSerializer(sales, many=True)
+
+        return Response(serializer.data)
+
+# Crée la vue API qui retourne le rapport du stock restant.
+class StockReportAPIView(APIView):
+    # Réserve l'accès au rapport aux utilisateurs connectés.
+    permission_classes = [IsAuthenticated]
+
+    # GET : récupère les lots de stock encore disponibles.
+    def get(self, request):
+        stock_lots = get_stock_report()
+        serializer = StockReportSerializer(stock_lots, many=True)
+
+        return Response(serializer.data)
+
+# Crée la vue API qui retourne le rapport des dépenses pour une période donnée.
+class ExpenseReportAPIView(APIView):
+    # Réserve l'accès au rapport aux utilisateurs connectés.
+    permission_classes = [IsAuthenticated]
+
+    # GET : récupère les dépenses comprises entre deux dates.
+    def get(self, request):
+        start_date = request.query_params.get("start_date")
+        end_date = request.query_params.get("end_date")
+
+        if not start_date or not end_date:
+            return Response(
+                {"error": "Les paramètres start_date et end_date sont obligatoires."},
+                status=400,
+            )
+
+        expenses = get_expenses_report(start_date, end_date)
+        serializer = ExpenseReportSerializer(expenses, many=True)
+
+        return Response(serializer.data)
+
+# Crée la vue API qui retourne le rapport des bénéfices pour une période donnée.
+class ProfitReportAPIView(APIView):
+    # Réserve l'accès au rapport aux utilisateurs connectés.
+    permission_classes = [IsAuthenticated]
+
+    # GET : récupère les résultats financiers entre deux dates.
+    def get(self, request):
+        start_date = request.query_params.get("start_date")
+        end_date = request.query_params.get("end_date")
+
+        if not start_date or not end_date:
+            return Response(
+                {"error": "Les paramètres start_date et end_date sont obligatoires."},
+                status=400,
+            )
+
+        profit_report = get_profit_report(start_date, end_date)
+        serializer = ProfitReportSerializer(profit_report)
+
+        return Response(serializer.data)
