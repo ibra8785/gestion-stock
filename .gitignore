@@ -1,5 +1,7 @@
-# Environnement virtuel Python
+```gitignore
+# Environnements virtuels Python
 .venv/
+venv/
 
 # Fichiers temporaires Python
 __pycache__/
@@ -8,8 +10,18 @@ __pycache__/
 # Base de données locale SQLite
 db.sqlite3
 
+# Dépendances et fichiers générés du frontend
+node_modules/
+dist/
+
+# Fichiers de cache et de compilation
+*.tsbuildinfo
+
 # Fichiers système macOS
 .DS_Store
 
 # Variables d'environnement et informations sensibles
 .env
+.env.*
+!.env.example
+```
