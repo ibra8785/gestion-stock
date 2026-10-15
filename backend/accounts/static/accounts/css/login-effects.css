@@ -1,0 +1,149 @@
+
+/* =========================================
+   SDW GROUP — DISPOSITION DES ÉLÉMENTS FLOTTANTS
+   ========================================= */
+
+/* Le fond décoratif reste indépendant du formulaire */
+.ambient-background {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    isolation: auto;
+}
+
+/* La carte de connexion reste au-dessus du fond */
+.login-container {
+    position: relative;
+    z-index: 1;
+}
+
+/* Les éléments décoratifs sont regroupés en haut */
+.digital-float {
+    position: fixed !important;
+    top: 14px !important;
+    bottom: auto !important;
+    z-index: 10 !important;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    width: 22%;
+    max-width: 250px;
+    min-height: 52px;
+    box-sizing: border-box;
+    padding: 9px 11px;
+
+    background: rgba(255, 255, 255, 0.96);
+    border: 1px solid rgba(4, 139, 154, 0.18);
+    border-radius: 13px;
+    box-shadow: 0 8px 24px rgba(20, 70, 80, 0.10);
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    opacity: 1;
+    pointer-events: none;
+}
+
+/* Quatre positions distinctes sur la rangée supérieure */
+.float-commerce {
+    left: 2% !important;
+    right: auto !important;
+}
+
+.float-business {
+    left: 26% !important;
+    right: auto !important;
+}
+
+.float-data {
+    left: 50% !important;
+    right: auto !important;
+}
+
+.float-online {
+    left: 74% !important;
+    right: auto !important;
+}
+
+/* Titres et descriptions entièrement lisibles */
+.float-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+    overflow: visible;
+}
+
+.float-copy strong {
+    display: block;
+    color: #087783;
+    font-size: 11px;
+    line-height: 1.35;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+.float-copy small {
+    display: block;
+    color: #526f75;
+    font-size: 9px;
+    line-height: 1.4;
+    white-space: normal;
+    overflow-wrap: anywhere;
+}
+
+/* Les icônes ne doivent pas disparaître */
+.digital-float > :first-child {
+    flex-shrink: 0;
+}
+
+/* Les particules restent derrière les éléments principaux */
+.digital-particle {
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* Écrans moyens : quatre éléments plus compacts */
+@media (max-width: 1000px) {
+    .digital-float {
+        width: 23%;
+        padding: 8px;
+        gap: 6px;
+    }
+
+    .float-commerce {
+        left: 1% !important;
+    }
+
+    .float-business {
+        left: 26% !important;
+    }
+
+    .float-data {
+        left: 51% !important;
+    }
+
+    .float-online {
+        left: 76% !important;
+    }
+
+    .float-copy strong {
+        font-size: 10px;
+    }
+
+    .float-copy small {
+        font-size: 8px;
+    }
+}
+
+/* Sur mobile, on masque les décorations pour préserver
+   la visibilité et l'utilisation du formulaire */
+@media (max-width: 760px), (max-height: 650px) {
+    .digital-float {
+        display: none !important;
+    }
+}

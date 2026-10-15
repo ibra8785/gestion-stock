@@ -1,33 +1,316 @@
+
+{% load static %}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Connexion - Gestion de stock</title>
+    <meta name="theme-color" content="#048b9a">
+    <title>Connexion | SDW Group</title>
+
+    <!-- Feuille de style complète de la connexion. -->
+    <link rel="stylesheet" href="{% static 'accounts/css/login.css' %}">
+    <link rel="stylesheet" href="{% static 'accounts/css/login.css' %}">
 </head>
 <body>
+    <!-- Décor numérique indépendant du formulaire. -->
+    <div class="ambient-background" aria-hidden="true">
+        <div class="ambient-grid"></div>
+        <span class="ambient-orb orb-one"></span>
+        <span class="ambient-orb orb-two"></span>
 
-    <!-- Formulaire de connexion. -->
-    <h1>Connexion</h1>
+        <svg class="digital-network" viewBox="0 0 1440 900" preserveAspectRatio="none">
+            <path d="M0 210 H150 L220 280 H340"/>
+            <path d="M1440 190 H1300 L1220 270 H1100"/>
+            <path d="M0 690 H170 L250 610 H350"/>
+            <path d="M1440 700 H1280 L1200 620 H1090"/>
+            <path d="M210 0 V100 L300 190"/>
+            <path d="M1230 900 V790 L1130 690"/>
+            <circle cx="340" cy="280" r="4"/>
+            <circle cx="1100" cy="270" r="4"/>
+            <circle cx="350" cy="610" r="4"/>
+            <circle cx="1090" cy="620" r="4"/>
+            <circle cx="300" cy="190" r="4"/>
+            <circle cx="1130" cy="690" r="4"/>
+        </svg>
 
-    <form method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-
-        <!-- Champ du nom d'utilisateur. -->
-        <div>
-            <label for="id_username">Nom d'utilisateur :</label>
-            <input type="text" name="username" id="id_username" required>
+        <div class="digital-float float-commerce">
+            <span class="float-icon">↗</span>
+            <span class="float-copy">
+                <strong>Commerce digital</strong>
+                <small>Connecter les opportunités</small>
+            </span>
         </div>
 
-        <!-- Champ du mot de passe. -->
-        <div>
-            <label for="id_password">Mot de passe :</label>
-            <input type="password" name="password" id="id_password" required>
+        <div class="digital-float float-business">
+            <span class="float-icon">▦</span>
+            <span class="float-copy">
+                <strong>Solutions d'entreprise</strong>
+                <small>Des outils pour avancer</small>
+            </span>
         </div>
 
-        <!-- Bouton de connexion. -->
-        <button type="submit">Se connecter</button>
-    </form>
+        <div class="digital-float float-data">
+            <span class="float-icon">⌘</span>
+            <span class="float-copy">
+                <strong>Écosystème connecté</strong>
+                <small>Les données en mouvement</small>
+            </span>
+        </div>
 
+        <div class="digital-float float-online">
+            <span class="online-pulse"></span>
+            <span class="float-copy">
+                <strong>Univers numérique</strong>
+                <small>Innovation en mouvement</small>
+            </span>
+        </div>
+
+        <span class="digital-particle particle-one"></span>
+        <span class="digital-particle particle-two"></span>
+        <span class="digital-particle particle-three"></span>
+        <span class="digital-particle particle-four"></span>
+        <span class="digital-particle particle-five"></span>
+        <span class="digital-particle particle-six"></span>
+    </div>
+
+    <main class="login-container">
+        <!-- Présentation de la marque. -->
+        <section class="brand-panel">
+            <div class="brand-decoration" aria-hidden="true">
+                <span class="decoration-ring ring-one"></span>
+                <span class="decoration-ring ring-two"></span>
+                <span class="decoration-glow"></span>
+            </div>
+
+            <div class="brand-content">
+                <a class="brand-logo" href="#" aria-label="SDW Group">
+                    <span class="logo-symbol">
+                        <svg viewBox="0 0 48 48" fill="none" aria-hidden="true">
+                            <path d="M10 34V14L24 26L38 14V34"
+                                  stroke="currentColor" stroke-width="4"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </span>
+                    <span class="brand-name">SDW <strong>Group</strong></span>
+                </a>
+
+                <span class="brand-tag">
+                    <span class="tag-dot"></span>
+                    Votre espace de gestion
+                </span>
+
+                <h1>Gardez le contrôle de votre activité.</h1>
+
+                <p class="brand-description">
+                    Une gestion plus claire, des opérations mieux organisées
+                    et les informations essentielles réunies au même endroit.
+                </p>
+
+                <!-- Illustration décorative de gestion commerciale. -->
+                <div class="visual-scene" aria-hidden="true">
+                    <span class="scene-orbit orbit-a"></span>
+                    <span class="scene-orbit orbit-b"></span>
+
+                    <div class="scene-center">
+                        <svg viewBox="0 0 48 48" fill="none">
+                            <rect x="8" y="8" width="32" height="32" rx="10"
+                                  stroke="currentColor" stroke-width="2"/>
+                            <path d="M16 30V23M24 30V17M32 30V21"
+                                  stroke="currentColor" stroke-width="3"
+                                  stroke-linecap="round"/>
+                        </svg>
+                    </div>
+
+                    <div class="floating-card card-stock">
+                        <span class="mini-icon">▤</span>
+                        <span class="mini-copy">
+                            <strong>Produits</strong>
+                            <small>Stock organisé</small>
+                        </span>
+                        <span class="mini-indicator"></span>
+                    </div>
+
+                    <div class="floating-card card-sales">
+                        <span class="mini-icon">↗</span>
+                        <span class="mini-copy">
+                            <strong>Ventes</strong>
+                            <small>Suivi simplifié</small>
+                        </span>
+                    </div>
+
+                    <div class="floating-card card-business">
+                        <span class="mini-icon">◎</span>
+                        <span class="mini-copy">
+                            <strong>Activité</strong>
+                            <small>Vue d'ensemble</small>
+                        </span>
+                    </div>
+
+                    <span class="scene-spark spark-a"></span>
+                    <span class="scene-spark spark-b"></span>
+                    <span class="scene-spark spark-c"></span>
+                </div>
+            </div>
+
+            <div class="brand-footer">
+                <span class="footer-line"></span>
+                <span>La technologie au service de votre activité.</span>
+            </div>
+        </section>
+
+        <!-- Formulaire de connexion Django. -->
+        <section class="form-panel">
+            <div class="mobile-brand">
+                <span class="mobile-logo">SDW <strong>Group</strong></span>
+                <span class="mobile-tag">Gestion commerciale</span>
+            </div>
+
+            <div class="form-content">
+                <div class="form-heading">
+                    <span class="welcome-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none">
+                            <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z"
+                                  stroke="currentColor" stroke-width="1.8"/>
+                            <path d="M4.5 20a7.5 7.5 0 0 1 15 0"
+                                  stroke="currentColor" stroke-width="1.8"
+                                  stroke-linecap="round"/>
+                        </svg>
+                    </span>
+
+                    <p class="eyebrow">ESPACE SÉCURISÉ</p>
+                    <h2>Content de vous revoir.</h2>
+                    <p class="form-description">
+                        Connectez-vous pour accéder à votre espace de gestion.
+                    </p>
+                </div>
+
+                {% if form.errors %}
+                    <div class="form-error" role="alert">
+                        Identifiant ou mot de passe incorrect. Veuillez réessayer.
+                    </div>
+                {% endif %}
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="form-message" role="status">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post" action="{% url 'login' %}" class="login-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ next }}">
+
+                    <div class="form-field">
+                        <label for="id_username">Nom d'utilisateur</label>
+                        <div class="input-wrapper">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <circle cx="12" cy="8" r="4"
+                                        stroke="currentColor" stroke-width="1.7"/>
+                                <path d="M4.5 20a7.5 7.5 0 0 1 15 0"
+                                      stroke="currentColor" stroke-width="1.7"
+                                      stroke-linecap="round"/>
+                            </svg>
+                            <input
+                                type="text"
+                                id="id_username"
+                                name="username"
+                                placeholder="Entrez votre identifiant"
+                                autocomplete="username"
+                                required
+                                autofocus
+                            >
+                        </div>
+                    </div>
+
+                    <div class="form-field">
+                        <div class="label-row">
+                            <label for="id_password">Mot de passe</label>
+                        </div>
+
+                        <div class="input-wrapper">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                <rect x="5" y="10" width="14" height="11" rx="2"
+                                      stroke="currentColor" stroke-width="1.7"/>
+                                <path d="M8 10V7a4 4 0 0 1 8 0v3"
+                                      stroke="currentColor" stroke-width="1.7"
+                                      stroke-linecap="round"/>
+                            </svg>
+                            <input
+                                type="password"
+                                id="id_password"
+                                name="password"
+                                placeholder="Entrez votre mot de passe"
+                                autocomplete="current-password"
+                                required
+                            >
+                            <button
+                                type="button"
+                                class="toggle-password"
+                                id="togglePassword"
+                                aria-label="Afficher le mot de passe"
+                                aria-pressed="false"
+                            >
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                    <path d="M2.5 12s3.5-6 9.5-6 9.5 6 9.5 6-3.5 6-9.5 6-9.5-6-9.5-6Z"
+                                          stroke="currentColor" stroke-width="1.7"/>
+                                    <circle cx="12" cy="12" r="2.5"
+                                            stroke="currentColor" stroke-width="1.7"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-button">
+                        <span>Se connecter</span>
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                            <path d="M5 12h14M13 6l6 6-6 6"
+                                  stroke="currentColor" stroke-width="1.8"
+                                  stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
+                </form>
+
+                <div class="security-note">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M12 3 19 6v5c0 4.5-3 7.5-7 10-4-2.5-7-5.5-7-10V6l7-3Z"
+                              stroke="currentColor" stroke-width="1.6"
+                              stroke-linejoin="round"/>
+                        <path d="m9 12 2 2 4-4"
+                              stroke="currentColor" stroke-width="1.6"
+                              stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Connexion protégée par votre espace sécurisé.</span>
+                </div>
+            </div>
+
+            <footer class="form-footer">
+                <span>© {% now "Y" %} SDW Group</span>
+                <span class="footer-status">
+                    <span></span>
+                    Système de gestion
+                </span>
+            </footer>
+        </section>
+    </main>
+
+    <!-- Affichage et masquage du mot de passe. -->
+    <script>
+        const passwordInput = document.getElementById("id_password");
+        const togglePassword = document.getElementById("togglePassword");
+
+        togglePassword.addEventListener("click", function () {
+            const isPassword = passwordInput.type === "password";
+
+            passwordInput.type = isPassword ? "text" : "password";
+            togglePassword.setAttribute(
+                "aria-label",
+                isPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"
+            );
+            togglePassword.setAttribute("aria-pressed", String(isPassword));
+        });
+    </script>
 </body>
 </html>
