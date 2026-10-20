@@ -1,6 +1,7 @@
-
 import { useEffect, useState } from 'react'
 import './App.css'
+import ProductsPage from './pages/ProductsPage'
+import SuppliersPage from './pages/SuppliersPage'
 
 // Rubriques principales de l'application
 const navigation = [
@@ -29,7 +30,7 @@ type DashboardData = {
 const formatMoney = (amount: number) =>
   `${new Intl.NumberFormat('fr-FR').format(amount)} FCFA`
 
-// Calcule les coordonnées de la courbe du graphique
+// Calcule les coordonnées de la courbe du graphique provisoire
 function createChartPoints(values: number[]) {
   const width = 720
   const height = 210
@@ -43,7 +44,7 @@ function createChartPoints(values: number[]) {
   }))
 }
 
-// Données provisoires du graphique, en attendant l'API dédiée
+// Données provisoires du graphique
 const salesPeriods = {
   Jour: {
     labels: ['00 h', '04 h', '08 h', '12 h', '16 h', '20 h', '23 h'],
@@ -95,7 +96,7 @@ function App() {
   const [apiError, setApiError] = useState('')
   const [loggingOut, setLoggingOut] = useState(false)
 
-  // Détecte les petits écrans pour adapter la déconnexion
+  // Détecte les petits écrans
   const [isMobile, setIsMobile] = useState(false)
 
   // Rubrique active et panneau de navigation mobile
@@ -130,7 +131,6 @@ function App() {
         })
 
         if (response.status === 401 || response.status === 403) {
-          // Une session expirée doit repasser par la connexion
           const destination = encodeURIComponent('http://localhost:5173/')
           window.location.href =
             `http://localhost:8000/accounts/login/?next=${destination}`
@@ -176,7 +176,7 @@ function App() {
 
   const areaPath = `${linePath} L 704 210 L 16 210 Z`
 
-  // Date affichée automatiquement selon la date du jour
+  // Date affichée automatiquement
   const today = new Intl.DateTimeFormat('fr-FR', {
     weekday: 'long',
     day: 'numeric',
@@ -207,7 +207,7 @@ function App() {
     </button>
   )
 
-  // Indicateurs construits avec les données réelles de l'API
+  // Indicateurs utilisant les données réelles de l'API
   const stats = dashboardData
     ? [
         {
@@ -258,7 +258,6 @@ function App() {
         <nav className="navigation" aria-label="Navigation principale">
           {navigation.map((item) => renderNavigationItem(item))}
 
-          {/* Bouton complémentaire pour les petits écrans */}
           <button
             type="button"
             className={`nav-item mobile-more-toggle ${moreOpen ? 'active' : ''}`}
@@ -288,7 +287,6 @@ function App() {
             <p>Retrouvez les informations sur votre application.</p>
           </div>
 
-          {/* Profil et déconnexion sur ordinateur */}
           <div className="user-profile">
             <div className="avatar">G</div>
 
@@ -324,7 +322,6 @@ function App() {
           <div className="topbar-actions">
             <span className="today">{today}</span>
 
-            {/* Déconnexion visible en haut sur petit écran */}
             {isMobile && (
               <button
                 type="button"
@@ -354,9 +351,9 @@ function App() {
           </div>
         </header>
 
-        {activePage === 'Tableau de bord' ? (
+        {/* Page Tableau de bord */}
+        {activePage === 'Tableau de bord' && (
           <div className="dashboard">
-            {/* Titre et action principale */}
             <section className="page-heading">
               <div>
                 <span className="eyebrow">VUE D'ENSEMBLE</span>
@@ -364,7 +361,11 @@ function App() {
                 <p>Voici ce qui se passe dans votre gestion de stock.</p>
               </div>
 
-              <button className="primary-button" type="button">
+              <button
+                className="primary-button"
+                type="button"
+                onClick={() => handleNavigation('Ventes')}
+              >
                 <span aria-hidden="true">＋</span>
                 Nouvelle opération
               </button>
@@ -482,9 +483,23 @@ function App() {
                     style={{ display: 'block', width: '100%', height: 'auto' }}
                   >
                     <defs>
-                      <linearGradient id="sales-area" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stopColor="#048B9A" stopOpacity="0.22" />
-                        <stop offset="100%" stopColor="#048B9A" stopOpacity="0.01" />
+                      <linearGradient
+                        id="sales-area"
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop
+                          offset="0%"
+                          stopColor="#048B9A"
+                          stopOpacity="0.22"
+                        />
+                        <stop
+                          offset="100%"
+                          stopColor="#048B9A"
+                          stopOpacity="0.01"
+                        />
                       </linearGradient>
                     </defs>
 
@@ -575,7 +590,13 @@ function App() {
                   <span style={{ color: '#64748B', fontSize: '13px' }}>
                     Produits vendus
                   </span>
-                  <strong style={{ display: 'block', fontSize: '25px', margin: '8px 0 4px' }}>
+                  <strong
+                    style={{
+                      display: 'block',
+                      fontSize: '25px',
+                      margin: '8px 0 4px',
+                    }}
+                  >
                     {new Intl.NumberFormat('fr-FR').format(chartData.sold)}
                   </strong>
                   <span style={{ color: '#64748B', fontSize: '12px' }}>
@@ -594,7 +615,13 @@ function App() {
                   <span style={{ color: '#64748B', fontSize: '13px' }}>
                     Produits réceptionnés
                   </span>
-                  <strong style={{ display: 'block', fontSize: '25px', margin: '8px 0 4px' }}>
+                  <strong
+                    style={{
+                      display: 'block',
+                      fontSize: '25px',
+                      margin: '8px 0 4px',
+                    }}
+                  >
                     {new Intl.NumberFormat('fr-FR').format(chartData.received)}
                   </strong>
                   <span style={{ color: '#64748B', fontSize: '12px' }}>
@@ -613,8 +640,16 @@ function App() {
                   <span style={{ color: '#64748B', fontSize: '13px' }}>
                     Nombre de ventes
                   </span>
-                  <strong style={{ display: 'block', fontSize: '25px', margin: '8px 0 4px' }}>
-                    {new Intl.NumberFormat('fr-FR').format(chartData.transactions)}
+                  <strong
+                    style={{
+                      display: 'block',
+                      fontSize: '25px',
+                      margin: '8px 0 4px',
+                    }}
+                  >
+                    {new Intl.NumberFormat('fr-FR').format(
+                      chartData.transactions,
+                    )}
                   </strong>
                   <span style={{ color: '#64748B', fontSize: '12px' }}>
                     Transactions illustratives
@@ -622,7 +657,14 @@ function App() {
                 </article>
               </div>
 
-              <p style={{ color: '#64748B', fontSize: '12px', marginTop: '18px', lineHeight: 1.5 }}>
+              <p
+                style={{
+                  color: '#64748B',
+                  fontSize: '12px',
+                  marginTop: '18px',
+                  lineHeight: 1.5,
+                }}
+              >
                 Le graphique et ses indicateurs restent fictifs pour le moment.
                 Nous les connecterons à des données calculées par l'API.
               </p>
@@ -724,23 +766,33 @@ function App() {
               <span>Statistiques générales connectées à Django</span>
             </footer>
           </div>
-        ) : (
-          /* Pages provisoires des autres rubriques */
-          <section className="placeholder-page">
-            <span className="eyebrow">GESTION COMMERCIALE</span>
-            <h1>{activePage}</h1>
-            <p>
-              Cette rubrique sera développée progressivement dans notre projet.
-            </p>
-            <button
-              className="primary-button"
-              type="button"
-              onClick={() => handleNavigation('Tableau de bord')}
-            >
-              ← Retour au tableau de bord
-            </button>
-          </section>
         )}
+
+        {/* Page Produits connectée à l'API Django */}
+        {activePage === 'Produits' && <ProductsPage />}
+
+        {/* Page Fournisseurs connectée à l'API Django */}
+        {activePage === 'Fournisseurs' && <SuppliersPage />}
+
+        {/* Les autres rubriques seront développées progressivement */}
+        {activePage !== 'Tableau de bord' &&
+          activePage !== 'Produits' &&
+          activePage !== 'Fournisseurs' && (
+            <section className="placeholder-page">
+              <span className="eyebrow">GESTION COMMERCIALE</span>
+              <h1>{activePage}</h1>
+              <p>
+                Cette rubrique sera développée progressivement dans notre projet.
+              </p>
+              <button
+                className="primary-button"
+                type="button"
+                onClick={() => handleNavigation('Tableau de bord')}
+              >
+                ← Retour au tableau de bord
+              </button>
+            </section>
+          )}
       </main>
     </div>
   )

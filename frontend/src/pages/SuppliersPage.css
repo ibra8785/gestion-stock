@@ -1,0 +1,638 @@
+/* =========================================================
+   1. CONTENEUR ET ESPACEMENT DE LA PAGE
+   ========================================================= */
+
+.suppliers-page {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--page-max-width, 1650px);
+  min-width: 0;
+  margin: 0 auto;
+  padding: 34px var(--page-padding-x, 35px) 24px;
+  color: var(--text-main, #18343a);
+}
+
+.suppliers-page *,
+.suppliers-page *::before,
+.suppliers-page *::after {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   2. EN-TÊTE DE LA PAGE
+   ========================================================= */
+
+.suppliers-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.suppliers-eyebrow {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--primary, #048b9a);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.suppliers-heading h1 {
+  margin: 0;
+  color: var(--text-main, #18343a);
+  font-size: clamp(26px, 3vw, 34px);
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+
+.suppliers-heading p {
+  margin: 8px 0 0;
+  color: var(--text-muted, #71858a);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Boutons principaux et secondaires */
+
+.suppliers-primary-button,
+.suppliers-secondary-button {
+  display: inline-flex;
+  min-height: 42px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 160ms ease,
+    border-color 160ms ease,
+    transform 160ms ease;
+}
+
+.suppliers-primary-button {
+  flex-shrink: 0;
+  color: #fff;
+  background: var(--primary, #048b9a);
+  box-shadow: 0 4px 12px rgb(4 139 154 / 14%);
+}
+
+.suppliers-primary-button:hover:not(:disabled) {
+  background: var(--primary-dark, #036d79);
+  transform: translateY(-1px);
+}
+
+.suppliers-secondary-button {
+  color: var(--text-main, #18343a);
+  background: #fff;
+  border-color: var(--border-color, #e5edef);
+}
+
+.suppliers-secondary-button:hover:not(:disabled) {
+  border-color: var(--primary, #048b9a);
+  background: var(--primary-light, #e7f5f6);
+}
+
+.suppliers-primary-button:disabled,
+.suppliers-secondary-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   3. MESSAGES DE CONFIRMATION ET D'ERREUR
+   ========================================================= */
+
+.suppliers-message {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding: 13px 16px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+.suppliers-message-success {
+  color: #176b4b;
+  background: #eaf8f0;
+  border-color: #c9ead7;
+}
+
+.suppliers-message-error {
+  color: #a62e38;
+  background: #fff0f0;
+  border-color: #f4d1d4;
+}
+
+.suppliers-message-close {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  color: inherit;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* =========================================================
+   4. PANNEAUX
+   ========================================================= */
+
+.suppliers-panel {
+  min-width: 0;
+  margin-bottom: 24px;
+  overflow: hidden;
+  border: 1px solid var(--border-color, #e5edef);
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 4px 16px rgb(24 52 58 / 3%);
+}
+
+.suppliers-panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px;
+  border-bottom: 1px solid #edf2f3;
+}
+
+.suppliers-panel-heading h2 {
+  margin: 0;
+  color: var(--text-main, #18343a);
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.suppliers-panel-heading p {
+  margin: 6px 0 0;
+  color: var(--text-muted, #71858a);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.suppliers-close-button {
+  display: grid;
+  width: 35px;
+  height: 35px;
+  flex-shrink: 0;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--border-color, #e5edef);
+  border-radius: 9px;
+  color: var(--text-muted, #71858a);
+  background: #fff;
+  font-size: 23px;
+  cursor: pointer;
+}
+
+.suppliers-close-button:hover {
+  color: var(--text-main, #18343a);
+  background: #f5f9fa;
+}
+
+/* =========================================================
+   5. FORMULAIRE
+   ========================================================= */
+
+.suppliers-form {
+  padding: 24px;
+}
+
+.suppliers-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.suppliers-field {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.suppliers-field > span {
+  color: var(--text-main, #18343a);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.suppliers-field input {
+  width: 100%;
+  min-width: 0;
+  min-height: 43px;
+  padding: 10px 12px;
+  border: 1px solid #dfe8ea;
+  border-radius: 9px;
+  outline: none;
+  color: var(--text-main, #18343a);
+  background: #fff;
+  font-size: 13px;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.suppliers-field input::placeholder {
+  color: #a0adb0;
+}
+
+.suppliers-field input:focus {
+  border-color: var(--primary, #048b9a);
+  box-shadow: 0 0 0 3px rgb(4 139 154 / 10%);
+}
+
+.suppliers-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #edf2f3;
+}
+
+/* =========================================================
+   6. LISTE ET RECHERCHE
+   ========================================================= */
+
+.suppliers-list-heading {
+  align-items: center;
+}
+
+.suppliers-search {
+  display: flex;
+  width: min(100%, 360px);
+  min-height: 44px;
+  flex: 0 1 360px;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  border: 1px solid var(--border-color, #e5edef);
+  border-radius: 10px;
+  color: var(--text-muted, #71858a);
+  background: #fff;
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.suppliers-search:focus-within {
+  border-color: var(--primary, #048b9a);
+  box-shadow: 0 0 0 3px rgb(4 139 154 / 10%);
+}
+
+.suppliers-search > span {
+  font-size: 24px;
+  line-height: 1;
+}
+
+.suppliers-search input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 0;
+  border: 0;
+  outline: none;
+  color: var(--text-main, #18343a);
+  background: transparent;
+  font-size: 13px;
+}
+
+.suppliers-search input::placeholder {
+  color: #9aa9ad;
+}
+
+/* =========================================================
+   7. TABLEAU : MÊMES COULEURS QUE LA PAGE PRODUITS
+   ========================================================= */
+
+.suppliers-table-container {
+  width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.suppliers-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.suppliers-table thead,
+.suppliers-table th {
+  background: rgb(4 139 154 / 15%);
+}
+
+.suppliers-table th {
+  padding: 14px 18px;
+  border-bottom: 1px solid #d9ebed;
+  color: #075b64;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+}
+
+.suppliers-table td {
+  padding: 16px 18px;
+  border-top: 1px solid #edf2f3;
+  color: #5f7479;
+  font-size: 12px;
+  vertical-align: middle;
+}
+
+.suppliers-table tbody tr {
+  transition: background 120ms ease;
+}
+
+.suppliers-table tbody tr:hover {
+  background: #f4fbfb;
+}
+
+.suppliers-actions-heading {
+  text-align: center;
+}
+
+.suppliers-reference {
+  display: inline-block;
+  padding: 5px 8px;
+  border: 1px solid #e6edef;
+  border-radius: 6px;
+  color: #52696e;
+  background: #f8fbfb;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.suppliers-name-cell {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  color: var(--text-main, #18343a);
+}
+
+.suppliers-name-cell strong {
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.suppliers-avatar {
+  display: grid;
+  width: 37px;
+  height: 37px;
+  flex-shrink: 0;
+  place-items: center;
+  border-radius: 10px;
+  color: var(--primary, #048b9a);
+  background: var(--primary-light, #e7f5f6);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   8. ACTIONS DU TABLEAU : ICÔNES
+   ========================================================= */
+
+.suppliers-row-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+
+.suppliers-icon-button {
+  display: grid;
+  width: 33px;
+  height: 33px;
+  flex-shrink: 0;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #e5edef;
+  border-radius: 8px;
+  color: #52696e;
+  background: #fff;
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    background 150ms ease,
+    border-color 150ms ease;
+}
+
+.suppliers-icon-button:hover {
+  border-color: #b7e0e3;
+  color: var(--primary-dark, #036d79);
+  background: var(--primary-light, #e7f5f6);
+}
+
+.suppliers-icon-button--danger:hover {
+  border-color: #f1c6ca;
+  color: #b4232e;
+  background: #fff0f0;
+}
+
+/* =========================================================
+   9. CHARGEMENT ET LISTE VIDE
+   ========================================================= */
+
+.suppliers-state {
+  display: flex;
+  min-height: 230px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 32px 20px;
+  color: var(--text-muted, #71858a);
+  text-align: center;
+  font-size: 13px;
+}
+
+.suppliers-state p {
+  max-width: 380px;
+  margin: 4px 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.suppliers-state h3 {
+  margin: 0;
+  color: var(--text-main, #18343a);
+  font-size: 15px;
+  font-weight: 750;
+}
+
+.suppliers-empty-icon {
+  display: grid;
+  width: 56px;
+  height: 56px;
+  place-items: center;
+  border-radius: 16px;
+  color: var(--primary, #048b9a);
+  background: var(--primary-light, #e7f5f6);
+  font-size: 27px;
+}
+
+.suppliers-loader {
+  width: 26px;
+  height: 26px;
+  border: 3px solid #dcebed;
+  border-top-color: var(--primary, #048b9a);
+  border-radius: 50%;
+  animation: suppliers-spin 700ms linear infinite;
+}
+
+@keyframes suppliers-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   10. TABLETTES
+   ========================================================= */
+
+@media (max-width: 1050px) {
+  .suppliers-table th,
+  .suppliers-table td {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+}
+
+/* =========================================================
+   11. TÉLÉPHONES
+   ========================================================= */
+
+@media (max-width: 760px) {
+  .suppliers-page {
+    padding: 24px 20px;
+  }
+
+  .suppliers-heading {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 18px;
+    margin-bottom: 22px;
+  }
+
+  .suppliers-heading h1 {
+    font-size: 27px;
+  }
+
+  .suppliers-heading p {
+    font-size: 12px;
+  }
+
+  .suppliers-heading > .suppliers-primary-button {
+    width: 100%;
+  }
+
+  .suppliers-panel {
+    margin-bottom: 17px;
+    border-radius: 12px;
+  }
+
+  .suppliers-panel-heading {
+    align-items: flex-start;
+    gap: 12px;
+    padding: 18px;
+  }
+
+  .suppliers-panel-heading h2 {
+    font-size: 15px;
+  }
+
+  .suppliers-form {
+    padding: 18px;
+  }
+
+  .suppliers-form-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 15px;
+  }
+
+  .suppliers-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .suppliers-form-actions button {
+    width: 100%;
+  }
+
+  .suppliers-list-heading {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .suppliers-search {
+    width: 100%;
+    flex-basis: auto;
+  }
+
+  .suppliers-table {
+    min-width: 700px;
+  }
+
+  .suppliers-table th,
+  .suppliers-table td {
+    padding: 14px 12px;
+    font-size: 11px;
+  }
+
+  .suppliers-message {
+    padding: 12px;
+    font-size: 12px;
+  }
+}
+
+/* =========================================================
+   12. TRÈS PETITS TÉLÉPHONES
+   ========================================================= */
+
+@media (max-width: 380px) {
+  .suppliers-page {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .suppliers-panel-heading,
+  .suppliers-form {
+    padding-right: 13px;
+    padding-left: 13px;
+  }
+}
+
+/* =========================================================
+   13. PRÉFÉRENCES D'ANIMATION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .suppliers-loader {
+    animation: none;
+  }
+
+  .suppliers-page *,
+  .suppliers-page *::before,
+  .suppliers-page *::after {
+    scroll-behavior: auto;
+    transition: none;
+  }
+}

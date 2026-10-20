@@ -1,4 +1,3 @@
-
 /* =========================================================
    1. COULEURS ET RÉGLAGES GÉNÉRAUX
    ========================================================= */
@@ -18,6 +17,10 @@
   --border-color: #e4eaee;
   --surface: #ffffff;
   --sidebar-width: 270px;
+
+  /* Espacement horizontal commun aux pages */
+  --page-padding-x: 35px;
+  --page-max-width: 1650px;
 }
 
 * {
@@ -73,10 +76,13 @@ a {
   transition: width 0.25s ease;
 }
 
+/* Le contenu principal ne rajoute pas de padding horizontal.
+   Chaque page gère son propre espacement. */
 .main-content {
   min-width: 0;
   min-height: 100vh;
   margin-left: var(--sidebar-width);
+  padding: 0;
   transition: margin-left 0.25s ease;
 }
 
@@ -360,7 +366,7 @@ a {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 0 35px;
+  padding: 0 var(--page-padding-x);
   background: #ffffffed;
   border-bottom: 1px solid var(--border-color);
   backdrop-filter: blur(14px);
@@ -468,14 +474,42 @@ a {
 }
 
 /* =========================================================
-   7. TITRE DU TABLEAU DE BORD
+   7. TITRE ET CONTENU DES PAGES
    ========================================================= */
+
+/* Tableau de bord : largeur et padding communs */
 
 .dashboard {
   width: 100%;
-  max-width: 1650px;
+  max-width: var(--page-max-width);
   margin: 0 auto;
-  padding: 34px 35px 24px;
+  padding: 34px var(--page-padding-x) 24px;
+}
+
+/* Page Produits : même espacement que les autres pages */
+
+.main-content > .products-page {
+  width: 100%;
+  max-width: var(--page-max-width);
+  min-width: 0;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 34px var(--page-padding-x) 24px;
+}
+
+/* Pages temporaires : largeur et espacement harmonisés */
+
+.placeholder-page {
+  display: flex;
+  width: 100%;
+  max-width: var(--page-max-width);
+  min-height: 55vh;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  margin-right: auto;
+  margin-left: auto;
+  padding: 34px var(--page-padding-x) 24px;
 }
 
 .page-heading {
@@ -510,6 +544,11 @@ a {
   color: #697b8b;
   font-size: 15px;
   line-height: 1.7;
+}
+
+.placeholder-page p {
+  max-width: 500px;
+  margin-bottom: 25px;
 }
 
 .primary-button {
@@ -936,7 +975,7 @@ td {
 }
 
 /* =========================================================
-   13. PIED DE PAGE ET PAGES TEMPORAIRES
+   13. PIED DE PAGE
    ========================================================= */
 
 .dashboard-footer {
@@ -948,20 +987,6 @@ td {
   font-size: 11px;
 }
 
-.placeholder-page {
-  display: flex;
-  min-height: 55vh;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 40px;
-}
-
-.placeholder-page p {
-  max-width: 500px;
-  margin-bottom: 25px;
-}
-
 /* =========================================================
    14. ÉCRANS MOYENS : MENU COMPACT
    ========================================================= */
@@ -969,6 +994,7 @@ td {
 @media (min-width: 761px) and (max-width: 1050px) {
   :root {
     --sidebar-width: 80px;
+    --page-padding-x: 22px;
   }
 
   .sidebar {
@@ -1013,14 +1039,9 @@ td {
     display: none;
   }
 
-  .dashboard {
-    padding-right: 22px;
-    padding-left: 22px;
-  }
-
   .topbar {
-    padding-right: 22px;
-    padding-left: 22px;
+    padding-right: var(--page-padding-x);
+    padding-left: var(--page-padding-x);
   }
 
   .page-heading h1 {
@@ -1045,6 +1066,10 @@ td {
    ========================================================= */
 
 @media (max-width: 760px) {
+  :root {
+    --page-padding-x: 16px;
+  }
+
   .app-layout {
     display: flex;
     min-height: 100vh;
@@ -1202,17 +1227,19 @@ td {
     font-size: 11px;
   }
 
+  /* Réserve de la place en bas pour le menu mobile fixe */
   .main-content {
     width: 100%;
+    min-width: 0;
     min-height: auto;
     margin-left: 0;
-    padding-bottom: calc(110px + env(safe-area-inset-bottom));
+    padding: 0 0 calc(110px + env(safe-area-inset-bottom));
   }
 
   .topbar {
     position: relative;
     min-height: 61px;
-    padding: 9px 16px;
+    padding: 9px var(--page-padding-x);
   }
 
   .breadcrumb {
@@ -1249,7 +1276,17 @@ td {
   }
 
   .dashboard {
-    padding: 25px 16px 20px;
+    padding: 25px var(--page-padding-x) 20px;
+  }
+
+  /* Sur téléphone, le contenu des Produits garde le même retrait */
+  .main-content > .products-page {
+    padding: 0 var(--page-padding-x) 20px;
+  }
+
+  .placeholder-page {
+    min-height: 45vh;
+    padding: 30px var(--page-padding-x);
   }
 
   .page-heading {
@@ -1420,11 +1457,6 @@ td {
     gap: 8px;
     font-size: 10px;
   }
-
-  .placeholder-page {
-    min-height: 45vh;
-    padding: 30px 20px;
-  }
 }
 
 /* =========================================================
@@ -1432,12 +1464,16 @@ td {
    ========================================================= */
 
 @media (max-width: 380px) {
+  :root {
+    --page-padding-x: 12px;
+  }
+
   .brand {
     padding-bottom: 12px;
   }
 
   .topbar {
-    padding: 8px 10px;
+    padding: 8px var(--page-padding-x);
     gap: 7px;
   }
 
@@ -1469,8 +1505,18 @@ td {
   }
 
   .dashboard {
-    padding-right: 11px;
-    padding-left: 11px;
+    padding-right: var(--page-padding-x);
+    padding-left: var(--page-padding-x);
+  }
+
+  .main-content > .products-page {
+    padding-right: var(--page-padding-x);
+    padding-left: var(--page-padding-x);
+  }
+
+  .placeholder-page {
+    padding-right: var(--page-padding-x);
+    padding-left: var(--page-padding-x);
   }
 
   .page-heading h1 {
@@ -1535,6 +1581,7 @@ td {
 }
 
 /* Respecte les préférences de réduction des animations */
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
